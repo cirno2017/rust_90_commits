@@ -1,25 +1,28 @@
 //
 fn main() {
-    let sensor_id: u32 = 1;
-    let mut sample_count: u32 = 0;
-    println!("Initial count: {sample_count}");
+    let raw: u16 = 2048;
+    let reference_mv: u32 = 3300;
+    let adc_max: u32 = 4095;
 
-    let reading: i32 = 253;
-    println!("Sensor {sensor_id}, raw: {reading}");
+    // TODO：先把 raw 转为 u32，再乘 reference_mv，
+    // 将乘积保存为 scaled，类型为 u32。
+    let scaled: u32 = raw as u32 * reference_mv;
 
-    // TODO：更新已有 sample_count，使其增加 1；这里不要再次使用 let。
-    sample_count = sample_count + 1;
-    // TODO：使用 let 遮蔽 reading，将其转换为 f64 类型的摄氏温度。
-    let reading: f64 = reading as f64 / 10.0;
+    // TODO：用 scaled 除以 adc_max，
+    // 将结果保存为 voltage_mv，类型为 u32。
+    let voltage_mv: u32 = scaled / adc_max;
 
-    println!("Temperature: {reading:.1} C");
-    println!("Samples: {sample_count}");
+    println!("raw={raw}, scaled={scaled}, voltage_mv={voltage_mv}");
 
-    {
-        // TODO：建立同名新绑定 reading，在当前温度上加 0.5。
-        let reading: f64 = reading + 0.5;
-        println!("Adjusted inside: {reading:.1} C");
-    }
+    let counter: u8 = 250;
+    let increment: u8 = 10;
 
-    println!("Temperature outside: {reading:.1} C");
+    let checked = counter.checked_add(increment);
+    let wrapped = counter.wrapping_add(increment);
+    let saturated = counter.saturating_add(increment);
+
+    println!("counter={counter}, increment={increment}");
+    println!("checked={checked:?}");
+    println!("wrapped={wrapped}");
+    println!("saturated={saturated}");
 }

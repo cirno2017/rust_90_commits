@@ -1,3 +1,2 @@
-在 sensor_id 定义后加入 sensor_id = 2;报错原因是let sensor_id: u32 = 1;说明sensor_id是一个不可变变量，sensor_id = 2是修改原本的值，违反了不可变变量的定义，所以报错。
-在 sample_count 定义后加入 sample_count = 1.5;报错原因是let mut sample_count: u32 = 0;定义了sample_count是32位整数类型，sample_count = 1.5;用f64类型对sample_count进行赋值，类型不符合，所以报错。
-let reading: f64 = reading as f64 / 10.0;可以成立是因为对reading进行了重新定义，把原本的reading遮蔽掉了，后面使用reading都按照新的类型新的值进行，所以可以成立。
+let scaled: u32 = raw as u32 * reference_mv; 这条指令，如果不对raw先进行扩宽，计算结果会是一个u16类型，产生截断，再赋值给scaled，虽然scaled是u32类型，但并不能保证是按u32类型进行计算的，所以必须先扩宽保证以u32类型进行计算。
+checked_add的策略是如果发生溢出即认为值无效，返回None; wrapping_add的策略是回绕，以实际得到的二进制数值作为结果; saturating_add的策略是饱和，如果发生溢出，就取当前类型所能表示的最大的值作为结果.
