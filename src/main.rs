@@ -8,7 +8,7 @@ fn adc_to_mv(raw: u16) -> u32 {
         let wide: u32 = raw as u32;
         wide * 3300
     };
-    return scaled / 4095;
+    scaled / 4095
 }
 
 fn mv_to_volts(millivolts: u32) -> f64 {
@@ -26,5 +26,4 @@ fn main() {
     let voltage_v: f64 = mv_to_volts(voltage_mv);
 
     println!("raw={raw}, voltage_mv={voltage_mv}, voltage_v={voltage_v:.3}");
-    println!("direct conversion: {:.3}", mv_to_volts(1));
 }
