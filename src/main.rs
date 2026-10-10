@@ -1,29 +1,36 @@
 //
-fn adc_to_mv(raw: u16) -> u32 {
-    // TODO：先扩宽 raw，再计算乘积，保存为 scaled。
-    // TODO：用尾表达式返回 scaled / 4095。
-    let scaled: u32 = {
-        // TODO：定义局部变量 wide，将 raw 扩宽为 u32。
-        // TODO：以 wide 与 3300 的乘积作为这个块的值。
-        let wide: u32 = raw as u32;
-        wide * 3300
-    };
-    scaled / 4095
-}
+// 调用约定：sample_count 已由 main 检查，范围为 0..=5。
+fn run_sampling(sample_count: u32, threshold_mv: u32) -> u32 {
+    let mut alarms: u32 = 0;
 
-fn mv_to_volts(millivolts: u32) -> f64 {
-    // TODO：先转为 f64，再除以 1000.0。
-    // 使用尾表达式返回结果。
-    millivolts as f64 / 1000.0
+    for index in 0..sample_count {
+        // TODO：根据 index 计算 voltage_mv，类型为 u32。
+        let voltage_mv: u32 = 1500 + index * 100;
+        // TODO：使用 if 表达式计算 alarm，类型为 u32：
+        // 达到或超过 threshold_mv 时为 1，否则为 0。
+        let alarm: u32 = if voltage_mv >= threshold_mv { 1 } else { 0 };
+        // TODO：将本次 alarm 累加到 alarms。
+        alarms += alarm;
+        println!("index={index}, voltage_mv={voltage_mv}, alarm={alarm}");
+    }
+
+    alarms
 }
 
 fn main() {
-    let raw: u16 = 2048;
+    let sample_count: u32 = 5;
+    let threshold_mv: u32 = 1700;
 
-    // TODO：调用 adc_to_mv，将结果保存为 voltage_mv。
-    // TODO：调用 mv_to_volts，将结果保存为 voltage_v。
-    let voltage_mv: u32 = adc_to_mv(raw);
-    let voltage_v: f64 = mv_to_volts(voltage_mv);
+    // TODO：如果 sample_count > 5，
+    // 打印 "invalid sample_count: expected 0..=5"
+    // 然后用 return; 退出 main。
+    if sample_count > 5 {
+        println!("invalid sample_count: expected 0..=5");
+        return;
+    }
 
-    println!("raw={raw}, voltage_mv={voltage_mv}, voltage_v={voltage_v:.3}");
+    // TODO：调用 run_sampling，保存返回的报警总数 alarms。
+    let alarms: u32 = run_sampling(sample_count, threshold_mv);
+
+    println!("samples={sample_count}, alarms={alarms}");
 }
