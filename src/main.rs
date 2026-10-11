@@ -1,36 +1,49 @@
 //
-// 调用约定：sample_count 已由 main 检查，范围为 0..=5。
-fn run_sampling(sample_count: u32, threshold_mv: u32) -> u32 {
-    let mut alarms: u32 = 0;
+// 本练习只使用下方给定的小数组，累计值保证落在 i64 范围内。
+// 返回顺序：(元素数量, 读数总和, 报警数量)
+fn summarize(samples: &[i32], threshold_mv: i32) -> (usize, i64, usize) {
+    let mut sum_mv: i64 = 0;
+    let mut alarms: usize = 0;
 
-    for index in 0..sample_count {
-        // TODO：根据 index 计算 voltage_mv，类型为 u32。
-        let voltage_mv: u32 = 1500 + index * 100;
-        // TODO：使用 if 表达式计算 alarm，类型为 u32：
-        // 达到或超过 threshold_mv 时为 1，否则为 0。
-        let alarm: u32 = if voltage_mv >= threshold_mv { 1 } else { 0 };
-        // TODO：将本次 alarm 累加到 alarms。
-        alarms += alarm;
-        println!("index={index}, voltage_mv={voltage_mv}, alarm={alarm}");
+    for &value in samples {
+        // TODO：先将 value 扩宽为 i64，再累加到 sum_mv。
+        sum_mv += value as i64;
+
+        // TODO：value >= threshold_mv 时，将 alarms 加 1。
+        if value >= threshold_mv {
+            alarms += 1;
+        }
     }
-
-    alarms
+    // TODO：用尾表达式返回三个统计值组成的元组。
+    (samples.len(), sum_mv, alarms)
 }
 
 fn main() {
-    let sample_count: u32 = 5;
-    let threshold_mv: u32 = 1700;
+    let samples: [i32; 5] = [1500, 1600, 1700, 1800, 1900];
+    let empty: [i32; 0] = [];
+    let single: [i32; 1] = [1700];
+    let signed: [i32; 3] = [-100, 0, 100];
+    let large: [i32; 2] = [i32::MAX, i32::MAX];
+    let threshold_mv: i32 = 1700;
 
-    // TODO：如果 sample_count > 5，
-    // 打印 "invalid sample_count: expected 0..=5"
-    // 然后用 return; 退出 main。
-    if sample_count > 5 {
-        println!("invalid sample_count: expected 0..=5");
-        return;
-    }
+    let (count, sum_mv, alarms) = summarize(&samples, threshold_mv);
+    println!("samples: count={count}, sum_mv={sum_mv}, alarms={alarms}");
 
-    // TODO：调用 run_sampling，保存返回的报警总数 alarms。
-    let alarms: u32 = run_sampling(sample_count, threshold_mv);
+    let (count, sum_mv, alarms) = summarize(&samples[1..4], threshold_mv);
+    println!("samples[1..4]: count={count}, sum_mv={sum_mv}, alarms={alarms}");
 
-    println!("samples={sample_count}, alarms={alarms}");
+    let (count, sum_mv, alarms) = summarize(&samples[2..2], threshold_mv);
+    println!("samples[2..2]: count={count}, sum_mv={sum_mv}, alarms={alarms}");
+
+    let (count, sum_mv, alarms) = summarize(&empty, threshold_mv);
+    println!("empty: count={count}, sum_mv={sum_mv}, alarms={alarms}");
+
+    let (count, sum_mv, alarms) = summarize(&single, threshold_mv);
+    println!("single: count={count}, sum_mv={sum_mv}, alarms={alarms}");
+
+    let (count, sum_mv, alarms) = summarize(&signed, 0);
+    println!("signed: count={count}, sum_mv={sum_mv}, alarms={alarms}");
+
+    let (count, sum_mv, alarms) = summarize(&large, threshold_mv);
+    println!("large: count={count}, sum_mv={sum_mv}, alarms={alarms}");
 }

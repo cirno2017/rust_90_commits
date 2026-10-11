@@ -1,6 +1,12 @@
-adc_to_mv函数有一个参数，参数类型为u16，函数返回类型为u32;
-mv_to_volts函数有一个参数，参数类型为u32，函数返回类型为f64;
-adc_to_mv函数内层块的scaled产生u32类型的值6,758,400，函数返回类型为u32返回值为1650;
-正常运行结果为raw=2048, voltage_mv=1650, voltage_v=1.650;
-第一个错误，尾值返回写成了scaled / 4095;带有分号表示计算后丢弃结果；函数体正常走到末尾且没有尾表达式，得到 ()，返回的是单元类型，但是adc_to_mv函数声明的返回类型是u32，不相符，于是产生错误;
-第二个错误，adc_to_mv(2048.0)，adc_to_mv函数声明的参数类型是u16，实际调用的参数类型是f64，不相符，于是产生错误;
+1. [i32; 5] 与 &[i32] 的区别。[i32; 5]表示类型为i32长度为5的数组，是数组本身。&[i32]不是数组，是数组的一个引用。
+2. summarize函数的返回类型是元组(usize, i64, usize)，分别表示元素数量, 读数总和, 报警数量。
+3. 各数组的实际输出为：
+samples: count=5, sum_mv=8500, alarms=3
+samples[1..4]: count=3, sum_mv=5100, alarms=2
+samples[2..2]: count=0, sum_mv=0, alarms=0
+empty: count=0, sum_mv=0, alarms=0
+single: count=1, sum_mv=1700, alarms=1
+signed: count=3, sum_mv=0, alarms=2
+large: count=2, sum_mv=4294967294, alarms=2
+4. 为什么空输入能正常返回，以及故意读取 samples[0] 后发生了什么？空输入表示没有任何输入，此时samples.len()的值是0，sum_mv和alarms都取默认值0，所以可以返回元组(0, 0, 0)，故意读取 samples[0]表示读取空输入的第一个元素，由于空输入没有任何元素，读取第一个元素属于越界，所以会报错。
+5. 为什么累计之前需要扩宽为 i64？为了防止i32加法溢出越界，把单个i32的value先转成更宽的i64，再累加进sum_mv: i64，保证总和不会溢出。
