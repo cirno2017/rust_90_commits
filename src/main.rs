@@ -1,49 +1,51 @@
 //
-// 本练习只使用下方给定的小数组，累计值保证落在 i64 范围内。
-// 返回顺序：(元素数量, 读数总和, 报警数量)
-fn summarize(samples: &[i32], threshold_mv: i32) -> (usize, i64, usize) {
-    let mut sum_mv: i64 = 0;
-    let mut alarms: usize = 0;
+// 返回顺序：(UTF-8 字节数, Unicode 标量值数量)
+fn text_stats(text: &str) -> (usize, usize) {
+    let mut char_count: usize = 0;
 
-    for &value in samples {
-        // TODO：先将 value 扩宽为 i64，再累加到 sum_mv。
-        sum_mv += value as i64;
-
-        // TODO：value >= threshold_mv 时，将 alarms 加 1。
-        if value >= threshold_mv {
-            alarms += 1;
-        }
+    for _ch in text.chars() {
+        // TODO：将 char_count 加 1。
+        char_count += 1;
     }
-    // TODO：用尾表达式返回三个统计值组成的元组。
-    (samples.len(), sum_mv, alarms)
+    // TODO：用尾表达式返回两个统计值。
+    (text.len(), char_count)
 }
+//
+fn show_units(text: &str) {
+    for ch in text.chars() {
+        // TODO：每行打印 char={ch}
+        println!("char={ch}");
+    }
 
+    for byte in text.bytes() {
+        // TODO：每行打印 byte={byte}
+        println!("byte={byte}");
+    }
+}
+//
 fn main() {
-    let samples: [i32; 5] = [1500, 1600, 1700, 1800, 1900];
-    let empty: [i32; 0] = [];
-    let single: [i32; 1] = [1700];
-    let signed: [i32; 3] = [-100, 0, 100];
-    let large: [i32; 2] = [i32::MAX, i32::MAX];
-    let threshold_mv: i32 = 1700;
+    let base: &str = "温度";
+    let mut label = String::from(base);
 
-    let (count, sum_mv, alarms) = summarize(&samples, threshold_mv);
-    println!("samples: count={count}, sum_mv={sum_mv}, alarms={alarms}");
+    // TODO：使用 push 追加字符 '-'。
+    // TODO：使用 push_str 追加字符串 "A"。
+    label.push('-');
+    label.push_str("A");
 
-    let (count, sum_mv, alarms) = summarize(&samples[1..4], threshold_mv);
-    println!("samples[1..4]: count={count}, sum_mv={sum_mv}, alarms={alarms}");
+    println!("base={base}");
+    println!("label={label}");
 
-    let (count, sum_mv, alarms) = summarize(&samples[2..2], threshold_mv);
-    println!("samples[2..2]: count={count}, sum_mv={sum_mv}, alarms={alarms}");
+    let (strbytes, strchars) = text_stats(base);
+    println!("base: byte={strbytes}, chars={strchars}");
+    let (strbytes, strchars) = text_stats(&label);
+    println!("label: byte={strbytes}, chars={strchars}");
+    println!("source_label={label}");
+    show_units(&label);
 
-    let (count, sum_mv, alarms) = summarize(&empty, threshold_mv);
-    println!("empty: count={count}, sum_mv={sum_mv}, alarms={alarms}");
-
-    let (count, sum_mv, alarms) = summarize(&single, threshold_mv);
-    println!("single: count={count}, sum_mv={sum_mv}, alarms={alarms}");
-
-    let (count, sum_mv, alarms) = summarize(&signed, 0);
-    println!("signed: count={count}, sum_mv={sum_mv}, alarms={alarms}");
-
-    let (count, sum_mv, alarms) = summarize(&large, threshold_mv);
-    println!("large: count={count}, sum_mv={sum_mv}, alarms={alarms}");
+    let string_array: [&str; 5] = ["", "ADC", "温度", "温度-A", "🙂"];
+    for str_temp in string_array {
+        let (strbytes, strchars) = text_stats(str_temp);
+        println!("String \"{str_temp}\": byte={strbytes}, chars={strchars}");
+        show_units(str_temp);
+    }
 }
