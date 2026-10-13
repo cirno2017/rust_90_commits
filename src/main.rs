@@ -1,51 +1,54 @@
 //
-// 返回顺序：(UTF-8 字节数, Unicode 标量值数量)
-fn text_stats(text: &str) -> (usize, usize) {
-    let mut char_count: usize = 0;
-
-    for _ch in text.chars() {
-        // TODO：将 char_count 加 1。
-        char_count += 1;
-    }
-    // TODO：用尾表达式返回两个统计值。
-    (text.len(), char_count)
+fn mv_to_uv(mv: i32) -> i64 {
+    // TODO：先把 mv 扩宽为 i64，再乘以 1000。
+    // TODO：用尾表达式返回结果。
+    mv as i64 * 1000
 }
-//
-fn show_units(text: &str) {
-    for ch in text.chars() {
-        // TODO：每行打印 char={ch}
-        println!("char={ch}");
-    }
 
-    for byte in text.bytes() {
-        // TODO：每行打印 byte={byte}
-        println!("byte={byte}");
-    }
-}
-//
 fn main() {
-    let base: &str = "温度";
-    let mut label = String::from(base);
+    let input_mv: i32 = 1500;
+    let output_uv = mv_to_uv(input_mv);
 
-    // TODO：使用 push 追加字符 '-'。
-    // TODO：使用 push_str 追加字符串 "A"。
-    label.push('-');
-    label.push_str("A");
+    println!("mv={input_mv}, uv={output_uv}");
+}
 
-    println!("base={base}");
-    println!("label={label}");
+#[cfg(test)]
+mod tests {
+    use super::mv_to_uv;
 
-    let (strbytes, strchars) = text_stats(base);
-    println!("base: byte={strbytes}, chars={strchars}");
-    let (strbytes, strchars) = text_stats(&label);
-    println!("label: byte={strbytes}, chars={strchars}");
-    println!("source_label={label}");
-    show_units(&label);
+    #[test]
+    fn zero_stays_zero() {
+        let actual = mv_to_uv(0);
+        let expected: i64 = 0_i64;
+        assert_eq!(actual, expected);
+    }
 
-    let string_array: [&str; 5] = ["", "ADC", "温度", "温度-A", "🙂"];
-    for str_temp in string_array {
-        let (strbytes, strchars) = text_stats(str_temp);
-        println!("String \"{str_temp}\": byte={strbytes}, chars={strchars}");
-        show_units(str_temp);
+    #[test]
+    fn converts_positive_mv() {
+        // TODO：检查 mv_to_uv(1500)。
+        let actual = mv_to_uv(1500);
+        let expected: i64 = 1_500_000_i64;
+        assert_eq!(actual, expected);
+    }
+
+    #[test]
+    fn converts_negative_mv() {
+        // TODO：检查 mv_to_uv(-25)。
+        let actual = mv_to_uv(-25);
+        let expected: i64 = -25_000_i64;
+        assert_eq!(actual, expected);
+    }
+
+    #[test]
+    fn converts_i32_limits() {
+        // TODO：检查 mv_to_uv(i32::MIN)。
+        // TODO：检查 mv_to_uv(i32::MAX)。
+        let actual = mv_to_uv(i32::MIN);
+        let expected: i64 = -2_147_483_648_000_i64;
+        assert_eq!(actual, expected);
+
+        let actual = mv_to_uv(i32::MAX);
+        let expected: i64 = 2_147_483_647_000_i64;
+        assert_eq!(actual, expected);
     }
 }
